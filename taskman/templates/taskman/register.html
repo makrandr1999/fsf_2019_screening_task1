@@ -1,0 +1,13 @@
+{% extends "taskman/header.html" %}
+
+{%block content%}
+<form method="POST" action="">
+    {% csrf_token %}
+    {{form.as_p}}
+
+    <button class="btn waves-effect waves-light" type="submit">Register
+    </button>
+</form>
+
+If you already have an account <a href="/login">login</a> instead
+{% endblock%}
