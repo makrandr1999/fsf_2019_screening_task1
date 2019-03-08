@@ -2,12 +2,18 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
 
 
-# Create your views here.
+# Create your views here.sdfkj486578
 def homepage(request):
     return render(request = request,
                   template_name='taskman/home.html')
+@login_required               
+def dashboard(request):
+    return render(request = request,
+                  template_name='taskman/dashboard.html')
 def register(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
@@ -18,7 +24,7 @@ def register(request):
             login(request, user)
             messages.info(request,f"You are now logged in as {username}")
 
-            return redirect("taskman:homepage")
+            return redirect("taskman:dashboard")
 
         else:
             for msg in form.error_messages:
@@ -46,7 +52,7 @@ def login_request(request):
             if user is not None:
                 login(request,user)
                 messages.info(request,f"You are now logged in as {username}")
-                return redirect("taskman:homepage")
+                return redirect("taskman:dashboard")
             else:
                 messages.error(request,"Invalid username or password")    
         else:
