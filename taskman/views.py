@@ -13,7 +13,7 @@ def homepage(request):
                   template_name='taskman/home.html')
 @login_required               
 def dashboard(request):
-    query_results = Task.objects.all()
+    query_results = Task.objects.filter(assignee=request.user)
 
     return render(request = request,
                   template_name='taskman/dashboard.html',context={"tasks":query_results})
