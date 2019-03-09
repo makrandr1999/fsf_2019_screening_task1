@@ -4,4 +4,21 @@
    <div class="card-panel">
         <span class="blue-text text-darken-2">Welcome to your dashboard!</span>
       </div>
+      <table>
+        <tr>
+            <th>Assignee</th>
+            
+            <th>Task Title</th>
+
+            <th>Task Status</th>
+        </tr>
+        {% for item in tasks %}
+        <tr> 
+            <td>{{ item.assignee }}</td>
+            
+            <td>{{ item.title }}</td>
+            <td>{{ item.status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
     {% endblock%} 

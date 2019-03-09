@@ -4,6 +4,7 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
+from .models import Task
 
 
 # Create your views here.sdfkj486578
@@ -12,8 +13,10 @@ def homepage(request):
                   template_name='taskman/home.html')
 @login_required               
 def dashboard(request):
+    query_results = Task.objects.all()
+
     return render(request = request,
-                  template_name='taskman/dashboard.html')
+                  template_name='taskman/dashboard.html',context={"tasks":query_results})
 def register(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
