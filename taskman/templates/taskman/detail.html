@@ -1,0 +1,16 @@
+{% extends "taskman/header.html" %}
+
+{%block content%}
+<div class="card-panel">
+    <span class="blue-text text-darken-2">Task Details</span>
+</div>
+        
+            <p>Assignee : {{ task.assignee }}</p>
+            <p>Task Title : {{ task.title }}</p>
+            <p>Task Description:<p>
+            <p>{{ task.text }}</p>
+            <p>Task Status:<p>
+            <p>{{ task.status }}</p>
+
+
+{% endblock%}

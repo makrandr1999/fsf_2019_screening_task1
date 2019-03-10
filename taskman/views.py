@@ -1,11 +1,12 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import get_object_or_404, render,redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from .models import Task
-
+from django.http import Http404
+from django.http import HttpResponse
 
 # Create your views here.sdfkj486578
 def homepage(request):
@@ -17,6 +18,15 @@ def dashboard(request):
 
     return render(request = request,
                   template_name='taskman/dashboard.html',context={"tasks":query_results})
+
+@login_required
+def detail(request, task_id):
+    task = get_object_or_404(Task, pk=task_id)
+    if task.assignee == request.user:
+        return render(request, 'taskman/detail.html', {'task': task})
+    else:  
+        return HttpResponse("Unauthorized Access %s." % task_id)                
+
 def register(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
