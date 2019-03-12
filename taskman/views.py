@@ -4,14 +4,20 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
-from .models import Task
+from .models import Task,Team
 from django.http import Http404
 from django.http import HttpResponse
 
-# Create your views here.sdfkj486578
+# Create your views here.sdfkj486578  Team.objects.filter(members__username='zaccishere')
 def homepage(request):
     return render(request = request,
                   template_name='taskman/home.html')
+
+@login_required               
+def teams(request):
+    query_results = Team.objects.filter(members__username=request.user)
+    return HttpResponse(query_results)
+    
 @login_required               
 def dashboard(request):
     query_results = Task.objects.filter(assignee=request.user)
@@ -25,7 +31,7 @@ def detail(request, task_id):
     if task.assignee == request.user:
         return render(request, 'taskman/detail.html', {'task': task})
     else:  
-        return HttpResponse("Unauthorized Access %s." % task_id)                
+        return HttpResponse("Unauthorized Access %s." % task_id)                   
 
 def register(request):
     if request.method == "POST":
