@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 class Task(models.Model):
@@ -32,6 +33,10 @@ class Task(models.Model):
 
     #def approved_comments(self):
     #    return self.comments.filter(approved_comment=True)
+class Team(models.Model):
+    name = models.CharField(max_length=64)
+    members = models.ManyToManyField(User)
+   
 '''
 # Create your models here.
 class Comment(models.Model):
