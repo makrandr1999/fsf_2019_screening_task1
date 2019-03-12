@@ -36,6 +36,9 @@ class Task(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=64)
     members = models.ManyToManyField(User)
+
+    def __str__(self):
+        return self.name
    
 '''
 # Create your models here.

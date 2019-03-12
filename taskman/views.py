@@ -16,7 +16,8 @@ def homepage(request):
 @login_required               
 def teams(request):
     query_results = Team.objects.filter(members__username=request.user)
-    return HttpResponse(query_results)
+    return render(request = request,
+                  template_name='taskman/teams.html',context={"teams":query_results})
     
 @login_required               
 def dashboard(request):
