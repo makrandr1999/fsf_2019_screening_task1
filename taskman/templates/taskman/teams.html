@@ -1,23 +1,35 @@
 {% extends "taskman/header.html" %}
 
 {%block content%}
+<head>
+    <script type="javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                var elems = document.querySelectorAll('.collapsible');
+                var instances = M.Collapsible.init(elems, options);
+              });
+    </script>
+</head>
 <div class="card-panel">
     <span class="blue-text text-darken-2">Your Teams</span>
 </div>
 {% if teams %}
-<table class="highlight">
-    <tr>
-        <th>Team</th>
-    </tr>
+<ul class="collapsible">
+
+
     {% for team in teams %}
- 
-    <tr>
-        <td>{{ team.name }}</td>
-    </tr>
+
+    <li>
+        <div class="collapsible-header">{{ team.name }}</div>
+         {% for i in team.members.all %}
+        <div class="collapsible-body"><span>{{i}}</span></div>
+        {% endfor %}
+    </li>
+
     {% endfor %}
-</table>
+</ul>
 {% else %}
 <p>You aren't a part of any team</p>
 {% endif %}
 
+            
 {% endblock%}
