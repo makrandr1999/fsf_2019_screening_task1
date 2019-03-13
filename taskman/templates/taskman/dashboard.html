@@ -7,19 +7,22 @@
 {% if tasks %}
 <table class="highlight">
     <tr>
-        <th>Assignee</th>
+        <th>Creator</th>
 
         <th>Task Title</th>
 
         <th>Task Status</th>
+
+        <th>Team Name</th>
     </tr>
     {% for task in tasks %}
  
     <tr>
-        <td>{{ task.assignee }}</td>
+        <td>{{ task.creator }}</td>
 
         <td>{{ task.title }}</td>
         <td>{{ task.status }}</td>
+        <td>{{ task.team }}</td>
         <td><a class="waves-effect waves-light btn-small" href="{% url 'taskman:detail' task.id %}">View</a></td>
     </tr>
     {% endfor %}

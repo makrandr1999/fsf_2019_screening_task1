@@ -29,10 +29,11 @@ def dashboard(request):
 @login_required
 def detail(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
-    if task.assignee == request.user:
+    #task = Task.objects.filter(id=task_id)
+    if request.user in task.assignee.all()  or task.creator == request.user:
         return render(request, 'taskman/detail.html', {'task': task})
     else:  
-        return HttpResponse("Unauthorized Access %s." % task_id)                   
+        return HttpResponse("Unauthorized Access %s." %task_id )                   
 
 def register(request):
     if request.method == "POST":

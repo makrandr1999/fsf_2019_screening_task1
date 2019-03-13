@@ -2,6 +2,12 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
+class Team(models.Model):
+    name = models.CharField(max_length=64)
+    members = models.ManyToManyField(User)
+
+    def __str__(self):
+        return self.name
 
 class Task(models.Model):
     PLANNED='Planned'
@@ -12,9 +18,11 @@ class Task(models.Model):
         (INPROGRESS, 'InProgress'),
         (DONE, 'Done'),
     )
-    assignee = models.ForeignKey('auth.User',verbose_name="Assignee",default=1,on_delete=models.SET_DEFAULT)
+    creator = models.ForeignKey('auth.User',verbose_name="Creator",default=1,on_delete=models.SET_DEFAULT)
+    assignee = models.ManyToManyField('auth.User',related_name='assignee',default=User)
     title = models.CharField(max_length=200)
     text = models.TextField()
+    team = models.ForeignKey(Team, on_delete=models.CASCADE,default=1)
     published_date = models.DateTimeField(
             blank=True, null=True)
 
@@ -33,12 +41,7 @@ class Task(models.Model):
 
     #def approved_comments(self):
     #    return self.comments.filter(approved_comment=True)
-class Team(models.Model):
-    name = models.CharField(max_length=64)
-    members = models.ManyToManyField(User)
 
-    def __str__(self):
-        return self.name
    
 '''
 # Create your models here.
