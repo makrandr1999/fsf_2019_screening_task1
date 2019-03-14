@@ -9,6 +9,8 @@ urlpatterns = [
     path('login/',views.login_request,name="login"),
     path('dashboard/',views.dashboard,name="dashboard"),
     path('teams/',views.teams,name="teams"),
+    path('create-team/',views.create_teams,name="create_teams"),
+    path('create-task/',views.create_task,name="create_tasks"),
     path('dashboard/<int:task_id>/', views.detail, name='detail'),
     
     ]

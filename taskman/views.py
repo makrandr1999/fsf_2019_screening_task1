@@ -7,6 +7,8 @@ from django.views.decorators.csrf import csrf_protect
 from .models import Task,Team
 from django.http import Http404
 from django.http import HttpResponse
+from django.db.models import Q
+from .forms import TeamForm,TaskForm
 
 # Create your views here.sdfkj486578  Team.objects.filter(members__username='zaccishere')
 def homepage(request):
@@ -18,10 +20,56 @@ def teams(request):
     query_results = Team.objects.filter(members__username=request.user)
     return render(request = request,
                   template_name='taskman/teams.html',context={"teams":query_results})
+@login_required               
+def create_teams(request):
+    if request.method == "POST":
+        form = TeamForm(request.POST,initial={'members':request.user})
+        if form.is_valid():
+            form.save()
+            teamname = form.cleaned_data.get('name')
+            messages.success(request,f"New Team Created: {teamname}")
+
+            return redirect("taskman:teams")
+
+        else:
+            for msg in form.error_messages:
+                messages.error(request, f"{msg}:{form.error_messages[msg]}")
+
+            return render(request = request,
+                          template_name = "taskman/create-team.html",
+                          context={"form":form})
+
+    form = TeamForm
+    return render(request = request,
+                  template_name = "taskman/create-team.html",
+                  context={"form":form})   
+@login_required               
+def create_tasks(request):
+    if request.method == "POST":
+        form = TaskForm(request.POST)
+        if form.is_valid():
+            form.save()
+            taskname = form.cleaned_data.get('title')
+            messages.success(request,f"New Task Created: {taskname}")
+
+            return redirect("taskman:dashboard")
+
+        else:
+            for msg in form.error_messages:
+                messages.error(request, f"{msg}:{form.error_messages[msg]}")
+
+            return render(request = request,
+                          template_name = "taskman/create-task.html",
+                          context={"form":form})
+
+    form = TaskForm
+    return render(request = request,
+                  template_name = "taskman/create-task.html",
+                  context={"form":form})                                            
     
 @login_required               
 def dashboard(request):
-    query_results = Task.objects.filter(assignee=request.user)
+    query_results = Task.objects.filter(Q(assignee=request.user) | Q(creator =request.user)).distinct()
 
     return render(request = request,
                   template_name='taskman/dashboard.html',context={"tasks":query_results})
