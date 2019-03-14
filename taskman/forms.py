@@ -11,4 +11,4 @@ class TeamForm(forms.ModelForm):
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ('creator','assignee','title','text','status')
+        fields = ('creator','team','assignee','title','text','status')
