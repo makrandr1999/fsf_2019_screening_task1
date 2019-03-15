@@ -5,7 +5,7 @@
     <span class="blue-text text-darken-2">Task Details</span>
 </div>
 {% if request.user == task.creator %}
-<a href="/" class="waves-effect waves-light btn-small">Edit Task</a>
+<a href="{% url 'taskman:task_edit' task.id %}" class="waves-effect waves-light btn-small">Edit Task</a>
 {% endif %}
    
             <p><b>Creator:</b>    {{ task.creator }}</p>

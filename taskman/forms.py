@@ -28,10 +28,10 @@ class TaskForm(forms.ModelForm):
     )
        '''
 
-        
+    '''    
     def __init__(self,request,*args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['team'].queryset = Team.objects.filter(members__username=request.user)
         #self.fields['assignee'].queryset = Team.objects.none()
-        
+    '''    
 

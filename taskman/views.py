@@ -82,6 +82,20 @@ def dashboard(request):
 
     return render(request = request,
                   template_name='taskman/dashboard.html',context={"tasks":query_results})
+@login_required
+def task_edit(request, task_id):
+    task = get_object_or_404(Task, pk=task_id)
+    if request.method == "POST":
+        form = TaskForm(request.POST, instance=task)
+        if form.is_valid():
+            #post = form.save(commit=False)
+            #post.author = request.user
+            #post.published_date = timezone.now()
+            task.save()
+            return redirect('taskman:detail',task_id=task_id)
+    else:
+        form = TaskForm(instance=task)
+    return render(request, 'taskman/create-task.html', {'form': form})                  
 
 @login_required
 def detail(request, task_id):
