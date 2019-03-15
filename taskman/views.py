@@ -42,12 +42,21 @@ def create_teams(request):
     form = TeamForm
     return render(request = request,
                   template_name = "taskman/create-team.html",
-                  context={"form":form})   
+                  context={"form":form})
+'''
+@login_required
+def load_assignees(request):
+    id = request.GET.get('team')
+    assignees = Team.objects.filter(id=id).values_list('members__username')
+    return render(request, 'taskman/assignee_dropdown_list_options.html', {'cities': assignees})                     
+'''
 @login_required               
 def create_tasks(request):
     if request.method == "POST":
         form = TaskForm(request.POST)
         if form.is_valid():
+            submission = form.save(commit=False)
+            submission.creator = request.user
             form.save()
             taskname = form.cleaned_data.get('title')
             messages.success(request,f"New Task Created: {taskname}")
@@ -62,7 +71,7 @@ def create_tasks(request):
                           template_name = "taskman/create-task.html",
                           context={"form":form})
 
-    form = TaskForm
+    form = TaskForm(request)
     return render(request = request,
                   template_name = "taskman/create-task.html",
                   context={"form":form})                                            
@@ -79,7 +88,8 @@ def detail(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     #task = Task.objects.filter(id=task_id)
     if request.user in task.assignee.all()  or task.creator == request.user:
-        return render(request, 'taskman/detail.html', {'task': task})
+        assignees=task.assignee.all()
+        return render(request, 'taskman/detail.html', {'task': task,'assignees':assignees})
     else:  
         return HttpResponse("Unauthorized Access %s." %task_id )                   
 

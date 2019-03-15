@@ -4,12 +4,17 @@
 <div class="card-panel">
     <span class="blue-text text-darken-2">Task Details</span>
 </div>
-        
-            <p>Assignee : {{ task.assignee }}</p>
-            <p>Task Title : {{ task.title }}</p>
-            <p>Task Description:<p>
+{% if request.user == task.creator %}
+<a href="/" class="waves-effect waves-light btn-small">Edit Task</a>
+{% endif %}
+   
+            <p><b>Creator:</b>    {{ task.creator }}</p>
+            <p><b>Team:</b>    {{ task.team }}</p>
+            <p><b>Assignee:</b>{% for assignee in assignees %} {{assignee}} &nbsp;{% endfor %}</p>
+            <p><b>Task Title:</b>  {{ task.title }}</p>
+            <p><b>Task Description:</b><p>
             <p>{{ task.text }}</p>
-            <p>Task Status: {{ task.status }}<p>
+            <p><b>Task Status:</b> {{ task.status }}<p>
             
 
 
