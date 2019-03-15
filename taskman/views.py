@@ -71,7 +71,7 @@ def create_tasks(request):
                           template_name = "taskman/create-task.html",
                           context={"form":form})
 
-    form = TaskForm
+    form = TaskForm()
     return render(request = request,
                   template_name = "taskman/create-task.html",
                   context={"form":form})                                            
