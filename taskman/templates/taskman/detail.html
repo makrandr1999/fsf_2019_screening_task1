@@ -1,9 +1,7 @@
 {% extends "taskman/header.html" %}
 
 {%block content%}
-<div class="card-panel">
-    <span class="blue-text text-darken-2">Task Details</span>
-</div>
+
 {% if request.user == task.creator %}
 <a href="{% url 'taskman:task_edit' task.id %}" class="waves-effect waves-light btn-small">Edit Task</a>
 {% endif %}
@@ -16,17 +14,21 @@
             <p>{{ task.text }}</p>
             <p><b>Task Status:</b> {{ task.status }}<p>
             <a class="btn btn-default" href="{% url 'taskman:add_comment' task_id=task.pk %}">Add comment</a>
+            
             {% for comment in task.comments.all %}
+            <div class="card-panel">
             <div class="comment">
                 <div class="date">
                     {{ comment.created_date }}
                 </div>
                 <strong>{{ comment.author }}</strong>
                 <p>{{ comment.text|linebreaks }}</p>
-                <hr>
+            
+            </div>
             </div>
             {% empty %}
             <p>No comments here yet :(</p>
+            </div>
             {% endfor %}
             
 

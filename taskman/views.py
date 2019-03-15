@@ -85,18 +85,19 @@ def dashboard(request):
 @login_required
 def task_edit(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
-    if request.method == "POST":
-        form = TaskForm(request.POST, instance=task)
-        if task.creator==request.user:
+    if task.creator==request.user:
+        if request.method == "POST":
+            form = TaskForm(request.POST, instance=task)
             if form.is_valid():
                task.save()
                return redirect('taskman:detail',task_id=task_id)
         else:
-            return HttpResponse("Unauthorized Access." )
-        
+            form = TaskForm(instance=task)
+            return render(request, 'taskman/create-task.html', {'form': form})      
     else:
-        form = TaskForm(instance=task)
-    return render(request, 'taskman/create-task.html', {'form': form}) 
+        return HttpResponse("Unauthorized Access." )
+        
+    
 @login_required
 def add_comment(request, task_id):
     task = get_object_or_404(Task,pk=task_id)

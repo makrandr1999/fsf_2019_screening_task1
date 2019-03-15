@@ -17,14 +17,17 @@
      
     
         <div class="container">
+            <div class=" card-panel">
+ 
             <br>
             {% block content%}
             {% endblock %}
+            </div>
         </div>
     
 {% if user.is_authenticated %}  
 <div class="fixed-action-btn tooltipped" data-position="left" data-tooltip="Create task" >
-        <a class="btn-floating btn-large black">
+        <a class="btn-floating btn-large black" href="/create-task" >
           <i class="large material-icons">mode_edit</i>
         </a>
         <ul>
@@ -34,7 +37,8 @@
           <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>
         </ul>
       </div>
-{% endif %}      
+{% endif %}   
+ 
             
     
     </body>
