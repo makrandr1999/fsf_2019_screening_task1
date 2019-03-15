@@ -8,7 +8,7 @@ from .models import Task,Team
 from django.http import Http404
 from django.http import HttpResponse
 from django.db.models import Q
-from .forms import TeamForm,TaskForm
+from .forms import TeamForm,TaskForm,CommentForm
 
 # Create your views here.sdfkj486578  Team.objects.filter(members__username='zaccishere')
 def homepage(request):
@@ -71,7 +71,7 @@ def create_tasks(request):
                           template_name = "taskman/create-task.html",
                           context={"form":form})
 
-    form = TaskForm(request)
+    form = TaskForm
     return render(request = request,
                   template_name = "taskman/create-task.html",
                   context={"form":form})                                            
@@ -87,15 +87,30 @@ def task_edit(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     if request.method == "POST":
         form = TaskForm(request.POST, instance=task)
-        if form.is_valid():
-            #post = form.save(commit=False)
-            #post.author = request.user
-            #post.published_date = timezone.now()
-            task.save()
-            return redirect('taskman:detail',task_id=task_id)
+        if task.creator==request.user:
+            if form.is_valid():
+               task.save()
+               return redirect('taskman:detail',task_id=task_id)
+        else:
+            return HttpResponse("Unauthorized Access." )
+        
     else:
         form = TaskForm(instance=task)
-    return render(request, 'taskman/create-task.html', {'form': form})                  
+    return render(request, 'taskman/create-task.html', {'form': form}) 
+@login_required
+def add_comment(request, task_id):
+    task = get_object_or_404(Task,pk=task_id)
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.task = task
+            comment.author=request.user
+            comment.save()
+            return redirect('taskman:detail',task_id=task_id)
+    else:
+        form = CommentForm()
+    return render(request, 'taskman/add-comment.html', {'form': form})                   
 
 @login_required
 def detail(request, task_id):

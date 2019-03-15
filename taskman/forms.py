@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Task,Team
+from .models import Task,Team,Comment
 from django.contrib.auth.models import User
 
 
@@ -33,5 +33,10 @@ class TaskForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['team'].queryset = Team.objects.filter(members__username=request.user)
         #self.fields['assignee'].queryset = Team.objects.none()
-    '''    
+    '''
+class CommentForm(forms.ModelForm):
+
+    class Meta:
+        model = Comment
+        fields = ('text',)        
 
