@@ -101,17 +101,21 @@ def task_edit(request, task_id):
 @login_required
 def add_comment(request, task_id):
     task = get_object_or_404(Task,pk=task_id)
-    if request.method == "POST":
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.task = task
-            comment.author=request.user
-            comment.save()
-            return redirect('taskman:detail',task_id=task_id)
+    if request.user in task.assignee.all()  or task.creator == request.user:
+        if request.method == "POST":
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.task = task
+                comment.author=request.user
+                comment.save()
+                return redirect('taskman:detail',task_id=task_id)
+        else:
+            form = CommentForm()
+            return render(request, 'taskman/add-comment.html', {'form': form}) 
     else:
-        form = CommentForm()
-    return render(request, 'taskman/add-comment.html', {'form': form})                   
+        return HttpResponse("Unauthorized Access." )
+                              
 
 @login_required
 def detail(request, task_id):
