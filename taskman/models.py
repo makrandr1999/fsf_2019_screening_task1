@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class Team(models.Model):
     name = models.CharField(max_length=64)
     members = models.ManyToManyField(User)
+    creator = models.CharField(max_length=200,default="admin")
 
     def __str__(self):
         return self.name

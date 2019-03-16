@@ -16,13 +16,22 @@
             <a class="btn btn-default" href="{% url 'taskman:add_comment' task_id=task.pk %}">Add comment</a>
             
             {% for comment in task.comments.all %}
+
             <div class="card-panel">
+                    
+
+            
             <div class="comment">
                 <div class="date">
-                    {{ comment.created_date }}
+                    {{ comment.created_date }}                <div class="right">
+                            {% if request.user.username == comment.author %}
+                  <a href="{% url 'taskman:comment_remove' comment.pk %}" class=" waves-effect waves-light btn-small red right-align">Delete</a>
+                  {% endif %}  
+                </div>
                 </div>
                 <strong>{{ comment.author }}</strong>
-                <p>{{ comment.text|linebreaks }}</p>
+                <p>{{ comment.text|linebreaks }}
+                </p>
             
             </div>
             </div>

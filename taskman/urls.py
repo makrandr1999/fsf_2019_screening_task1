@@ -14,7 +14,8 @@ urlpatterns = [
     path('create-task/',views.create_tasks,name="create_tasks"),
     path('dashboard/<int:task_id>/', views.detail, name='detail'),
     path('dashboard/<int:task_id>/edit', views.task_edit, name='task_edit'),
-    path('dashboard/<int:task_id>/comment', views.add_comment, name='add_comment')
+    path('dashboard/<int:task_id>/comment', views.add_comment, name='add_comment'),
+    path('comment/<int:pk>/', views.comment_remove, name='comment_remove')
 
     
     

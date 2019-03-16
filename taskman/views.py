@@ -4,7 +4,7 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
-from .models import Task,Team
+from .models import Task,Team,Comment
 from django.http import Http404
 from django.http import HttpResponse
 from django.db.models import Q
@@ -14,6 +14,15 @@ from .forms import TeamForm,TaskForm,CommentForm
 def homepage(request):
     return render(request = request,
                   template_name='taskman/home.html')
+@login_required
+def comment_remove(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    if request.user.username == comment.author:
+        comment.delete()
+        return redirect('taskman:detail', task_id=comment.task.pk)  
+    else:
+        return HttpResponse("Unauthorized Access." )
+
 
 @login_required               
 def teams(request):
@@ -25,6 +34,8 @@ def create_teams(request):
     if request.method == "POST":
         form = TeamForm(request.POST,initial={'members':request.user})
         if form.is_valid():
+            team = form.save(commit=False)
+            team.creator=request.user
             form.save()
             teamname = form.cleaned_data.get('name')
             messages.success(request,f"New Team Created: {teamname}")
