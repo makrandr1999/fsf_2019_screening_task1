@@ -8,7 +8,7 @@ from .models import Task,Team,Comment
 from django.http import Http404
 from django.http import HttpResponse
 from django.db.models import Q
-from .forms import TeamForm,TaskForm,CommentForm
+from .forms import TeamForm,TaskForm,CommentForm,SelectTeamForm
 
 # Create your views here.sdfkj486578  Team.objects.filter(members__username='zaccishere')
 def homepage(request):
@@ -29,6 +29,32 @@ def teams(request):
     query_results = Team.objects.filter(members__username=request.user)
     return render(request = request,
                   template_name='taskman/teams.html',context={"teams":query_results})
+@login_required               
+def select_team(request):
+    if request.method == "POST":
+        form = SelectTeamForm(request,request.POST)
+        if form.is_valid():
+            team = form.save(commit=False)
+            form.save()
+            team = form.cleaned_data.get('team')
+            teamid=team.id
+            
+            #messages.success(request,f" Team Selected: {teamname}")
+            #return HttpResponse("Team Selected. %s" %teamid )
+            return redirect("taskman:create_tasks",teamid=teamid)
+
+        else:
+            for msg in form.error_messages:
+                messages.error(request, f"{msg}:{form.error_messages[msg]}")
+
+            return render(request = request,
+                          template_name = "taskman/select-team.html",
+                          context={"form":form})
+
+    form = SelectTeamForm(request=request)
+    return render(request = request,
+                  template_name = "taskman/select-team.html",
+                  context={"form":form})
 @login_required               
 def create_teams(request):
     if request.method == "POST":
@@ -62,9 +88,9 @@ def load_assignees(request):
     return render(request, 'taskman/assignee_dropdown_list_options.html', {'cities': assignees})                     
 '''
 @login_required               
-def create_tasks(request):
+def create_tasks(request,teamid):
     if request.method == "POST":
-        form = TaskForm(request.POST)
+        form = TaskForm(teamid,request.POST)
         if form.is_valid():
             submission = form.save(commit=False)
             submission.creator = request.user
@@ -82,7 +108,7 @@ def create_tasks(request):
                           template_name = "taskman/create-task.html",
                           context={"form":form})
 
-    form = TaskForm()
+    form = TaskForm(teamid)
     return render(request = request,
                   template_name = "taskman/create-task.html",
                   context={"form":form})                                            
@@ -98,12 +124,12 @@ def task_edit(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     if task.creator==request.user:
         if request.method == "POST":
-            form = TaskForm(request.POST, instance=task)
+            form = TaskForm(task.team.id,request.POST, instance=task)
             if form.is_valid():
                task.save()
                return redirect('taskman:detail',task_id=task_id)
         else:
-            form = TaskForm(instance=task)
+            form = TaskForm(instance=task,teamid=task.team.id)
             return render(request, 'taskman/create-task.html', {'form': form})      
     else:
         return HttpResponse("Unauthorized Access." )

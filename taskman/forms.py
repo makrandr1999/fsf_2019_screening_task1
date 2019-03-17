@@ -14,7 +14,7 @@ class TaskForm(forms.ModelForm):
     #team = forms.ModelChoiceField(queryset=Team.objects.filter(members__username=User))
     class Meta:
         model = Task
-        fields = ('team','assignee','title','text','status')
+        fields = ('assignee','title','text','status')
         '''
         city = forms.ModelChoiceField(
         queryset=City.objects.all(),
@@ -27,16 +27,31 @@ class TaskForm(forms.ModelForm):
         )
     )
        '''
-
-    '''    
-    def __init__(self,request,*args, **kwargs):
+    
+       
+    def __init__(self,teamid,*args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['team'].queryset = Team.objects.filter(members__username=request.user)
+        i=Team.objects.filter(id=teamid)
+        self.fields['assignee'].queryset =i[0].members.all()
         #self.fields['assignee'].queryset = Team.objects.none()
-    '''
+    
 class CommentForm(forms.ModelForm):
 
     class Meta:
         model = Comment
-        fields = ('text',)        
+        fields = ('text',)
+class SelectTeamForm(forms.ModelForm):
+
+    class Meta:
+        model = Task
+        fields = ('team',)
+    def __init__(self,request,*args, **kwargs):
+        super().__init__(*args, **kwargs)
+        teams= Team.objects.filter(members__username=request.user)
+        if not teams:
+           self.fields['team'].queryset = 'self'
+        else:
+           self.fields['team'].queryset = teams    
+        #self.fields['assignee'].queryset = Team.objects.none()    
+
 
