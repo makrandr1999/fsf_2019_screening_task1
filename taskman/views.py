@@ -37,21 +37,25 @@ def select_team(request):
             team = form.save(commit=False)
             form.save()
             team = form.cleaned_data.get('team')
-            teamid=team.id
+            if team == None:
+                teamid= 0
+            else:
+                teamid=team.id    
+            
             
             #messages.success(request,f" Team Selected: {teamname}")
             #return HttpResponse("Team Selected. %s" %teamid )
             return redirect("taskman:create_tasks",teamid=teamid)
 
         else:
-            for msg in form.error_messages:
-                messages.error(request, f"{msg}:{form.error_messages[msg]}")
+            #for msg in form.error_messages:
+            #    messages.error(request, f"{msg}:{form.error_messages[msg]}")
 
             return render(request = request,
                           template_name = "taskman/select-team.html",
                           context={"form":form})
 
-    form = SelectTeamForm(request=request)
+    form = SelectTeamForm(request)
     return render(request = request,
                   template_name = "taskman/select-team.html",
                   context={"form":form})
@@ -90,7 +94,7 @@ def load_assignees(request):
 @login_required               
 def create_tasks(request,teamid):
     if request.method == "POST":
-        form = TaskForm(teamid,request.POST)
+        form = TaskForm(request,teamid,request.POST)
         if form.is_valid():
             submission = form.save(commit=False)
             submission.creator = request.user
@@ -108,7 +112,7 @@ def create_tasks(request,teamid):
                           template_name = "taskman/create-task.html",
                           context={"form":form})
 
-    form = TaskForm(teamid)
+    form = TaskForm(request=request,teamid=teamid)
     return render(request = request,
                   template_name = "taskman/create-task.html",
                   context={"form":form})                                            
@@ -129,7 +133,7 @@ def task_edit(request, task_id):
                task.save()
                return redirect('taskman:detail',task_id=task_id)
         else:
-            form = TaskForm(instance=task,teamid=task.team.id)
+            form = TaskForm(instance=task,request=request,teamid=task.team.id)
             return render(request, 'taskman/create-task.html', {'form': form})      
     else:
         return HttpResponse("Unauthorized Access." )
