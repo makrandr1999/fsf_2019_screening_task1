@@ -3,7 +3,9 @@
 {%block content%}
 
 {% if request.user == task.creator %}
-<a href="{% url 'taskman:task_edit' task.id %}" class="waves-effect waves-light btn-small">Edit Task</a>
+<div class="right-align  ">
+<a href="{% url 'taskman:task_edit' task.id %}" class="waves-effect waves-light btn-small blue ">Edit Task<i class="material-icons right">mode_edit</i></a>
+</div>
 {% endif %}
    
             <p><b>Creator:</b>    {{ task.creator }}</p>

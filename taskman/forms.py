@@ -2,6 +2,8 @@ from django import forms
 
 from .models import Task,Team,Comment
 from django.contrib.auth.models import User
+from django.db.models import Q
+
 
 
 class TeamForm(forms.ModelForm):
@@ -31,6 +33,8 @@ class TaskForm(forms.ModelForm):
        
     def __init__(self,request,teamid,*args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['title'].required = True
+        self.fields['assignee'].required = True
         if teamid is not 0 :
             i=Team.objects.filter(id=teamid)
             self.fields['assignee'].queryset =i[0].members.all()
@@ -53,7 +57,7 @@ class SelectTeamForm(forms.ModelForm):
     def __init__(self,request,*args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['team'].required = False
-        teams= Team.objects.filter(members__username=request.user)
+        teams= Team.objects.filter(Q(members__username=request.user) | Q(creator =request.user)).distinct()
         self.fields['team'].queryset = teams
         
            

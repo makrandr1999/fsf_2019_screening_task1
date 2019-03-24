@@ -1,7 +1,7 @@
 {% extends "taskman/header.html" %}
 
 {%block content%}
-
+<h5>Login</h5>
 <form method="POST" action="">
     {% csrf_token %}
     {{form.as_p}}
@@ -10,6 +10,6 @@
     </button>
 </form>
 
-If you don't already have an account <a href="/register">Register</a> instead
+If you don't have an account <a href="/register">Register</a> instead
 
 {% endblock%}

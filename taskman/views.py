@@ -26,7 +26,7 @@ def comment_remove(request, pk):
 
 @login_required               
 def teams(request):
-    query_results = Team.objects.filter(members__username=request.user)
+    query_results = Team.objects.filter(Q(members__username=request.user) | Q(creator =request.user)).distinct()
     return render(request = request,
                   template_name='taskman/teams.html',context={"teams":query_results})
 @login_required               
@@ -128,7 +128,7 @@ def task_edit(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     if task.creator==request.user:
         if request.method == "POST":
-            form = TaskForm(task.team.id,request.POST, instance=task)
+            form = TaskForm(task,task.team.id,request.POST)
             if form.is_valid():
                task.save()
                return redirect('taskman:detail',task_id=task_id)

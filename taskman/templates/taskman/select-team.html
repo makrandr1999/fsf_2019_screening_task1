@@ -1,9 +1,7 @@
 {% extends "taskman/header.html" %}
 
 {%block content%}
-<div class="card-panel">
-    <span class="blue-text text-darken-2">Select team </span>
-</div>
+<h5>Select a Team</h5>
 <form method="POST"  class="post-form">{% csrf_token %}
         {{ form.as_p}}
         <button type="submit" class="save btn btn-default">Save</button>
