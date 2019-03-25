@@ -93,29 +93,33 @@ def load_assignees(request):
 '''
 @login_required               
 def create_tasks(request,teamid):
-    if request.method == "POST":
-        form = TaskForm(request,teamid,request.POST)
-        if form.is_valid():
-            submission = form.save(commit=False)
-            submission.creator = request.user
-            form.save()
-            taskname = form.cleaned_data.get('title')
-            messages.success(request,f"New Task Created: {taskname}")
+    team_check=Team.objects.filter(Q(members__username=request.user) | Q(creator =request.user),id=teamid).distinct()
+    if team_check:
+        if request.method == "POST":
+            form = TaskForm(request,teamid,request.POST)
+            if form.is_valid():
+                submission = form.save(commit=False)
+                submission.creator = request.user
+                form.save()
+                taskname = form.cleaned_data.get('title')
+                messages.success(request,f"New Task Created: {taskname}")
 
-            return redirect("taskman:dashboard")
+                return redirect("taskman:dashboard")
 
-        else:
-            for msg in form.error_messages:
-                messages.error(request, f"{msg}:{form.error_messages[msg]}")
+            else:
+                for msg in form.error_messages:
+                    messages.error(request, f"{msg}:{form.error_messages[msg]}")
 
-            return render(request = request,
-                          template_name = "taskman/create-task.html",
-                          context={"form":form})
+                return render(request = request,
+                                template_name = "taskman/create-task.html",
+                                context={"form":form})
 
-    form = TaskForm(request=request,teamid=teamid)
-    return render(request = request,
-                  template_name = "taskman/create-task.html",
-                  context={"form":form})                                            
+        form = TaskForm(request=request,teamid=teamid)
+        return render(request = request,
+                        template_name = "taskman/create-task.html",
+                        context={"form":form}) 
+    else:
+        return HttpResponse("Unauthorized Access." )                                                               
     
 @login_required               
 def dashboard(request):

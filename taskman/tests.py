@@ -4,10 +4,10 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 # Create your tests here.
-
-'''
-
-'''
+usera = User(pk=10,username='tomisbest0', password='tom123456789')
+usera.save()
+userb = User(pk=11,username='zack0', password='zack')
+userb.save()
 
 class TaskModelTest(TestCase):
     @classmethod
@@ -54,6 +54,7 @@ class TaskModelTest(TestCase):
         # This will also fail if the urlconf is not defined.
         self.assertEquals(author.get_absolute_url(), '/catalog/author/1')
     '''
+    
 class TeamModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -102,10 +103,24 @@ class CommentModelTest(TestCase):
         self.assertEqual(comment.author, 'tomisbest')
         self.assertEqual(comment.text,'Awesome work')
 
-    '''
+    
     def test_name_max_length(self):
         team = Team.objects.get(pk=1)
         max_length = team._meta.get_field('name').max_length
         self.assertEquals(max_length, 64) 
-    '''      
+         
+def create_team(name,members,creator):
+    return Team.objects.create(name=name,members=members,creator=creator)
+
+class TeamIndexViewTests(TestCase):
+    def test_no_teams(self):
+        """
+        If no questions exist, an appropriate message is displayed.
+        """
+        response = self.client.get(reverse('taskman:teams'))
+        self.client.login(username='tomisbest0', password='tom123456789')
+        #print('hello')
+        self.assertEqual(response.status_code, 200)
+        #self.assertContains(response, "No polls are available.")
+        #self.assertQuerysetEqual(response.context['teams'], [])
 
