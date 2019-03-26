@@ -14,6 +14,7 @@ from .forms import TeamForm,TaskForm,CommentForm,SelectTeamForm
 def homepage(request):
     return render(request = request,
                   template_name='taskman/home.html')
+                 
 @login_required
 def comment_remove(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
@@ -21,7 +22,8 @@ def comment_remove(request, pk):
         comment.delete()
         return redirect('taskman:detail', task_id=comment.task.pk)  
     else:
-        return HttpResponse("Unauthorized Access." )
+        return render(request = request,
+                  template_name='taskman/unauthorized.html')    
 
 
 @login_required               
@@ -119,7 +121,8 @@ def create_tasks(request,teamid):
                         template_name = "taskman/create-task.html",
                         context={"form":form}) 
     else:
-        return HttpResponse("Unauthorized Access." )                                                               
+        return render(request = request,
+                  template_name='taskman/unauthorized.html')                                                                   
     
 @login_required               
 def dashboard(request):
@@ -140,7 +143,8 @@ def task_edit(request, task_id):
             form = TaskForm(instance=task,request=request,teamid=task.team.id)
             return render(request, 'taskman/create-task.html', {'form': form})      
     else:
-        return HttpResponse("Unauthorized Access." )
+        return render(request = request,
+                  template_name='taskman/unauthorized.html')    
         
     
 @login_required
@@ -159,7 +163,8 @@ def add_comment(request, task_id):
             form = CommentForm()
             return render(request, 'taskman/add-comment.html', {'form': form}) 
     else:
-        return HttpResponse("Unauthorized Access." )
+        return render(request = request,
+                  template_name='taskman/unauthorized.html')    
                               
 
 @login_required
@@ -170,7 +175,8 @@ def detail(request, task_id):
         assignees=task.assignee.all()
         return render(request, 'taskman/detail.html', {'task': task,'assignees':assignees})
     else:  
-        return HttpResponse("Unauthorized Access %s." %task_id )                   
+        return render(request = request,
+                  template_name='taskman/unauthorized.html')                      
 
 def register(request):
     if request.method == "POST":

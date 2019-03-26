@@ -1,7 +1,7 @@
 {% extends "taskman/header.html" %}
 
 {%block content%}
-
+<h5>Task Details</h5>
 {% if request.user == task.creator %}
 <div class="right-align  ">
 <a href="{% url 'taskman:task_edit' task.id %}" class="waves-effect waves-light btn-small blue ">Edit Task<i class="material-icons right">mode_edit</i></a>
