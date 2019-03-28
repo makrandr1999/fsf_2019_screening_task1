@@ -127,7 +127,7 @@ class TeamIndexViewTests(TestCase):
         #print('hello')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "You aren't a part of any team")
-        #self.assertQuerysetEqual(response.context['teams'], [])
+        #self.assertQuerysetEqual(response.context['teams'], [])    
 class DashBoardIndexViewTests(TestCase):
 
     def test_no_tasks(self):
