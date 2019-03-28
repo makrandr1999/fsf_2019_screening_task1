@@ -1,7 +1,8 @@
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from .models import Task,Team,Comment
 from django.contrib.auth.models import User
 from django.urls import reverse
+from .views import teams
 
 # Create your tests here.
 usera = User(pk=10,username='tomisbest0', password='tom123456789')
@@ -113,14 +114,29 @@ def create_team(name,members,creator):
     return Team.objects.create(name=name,members=members,creator=creator)
 
 class TeamIndexViewTests(TestCase):
+
     def test_no_teams(self):
-        """
-        If no questions exist, an appropriate message is displayed.
-        """
-        response = self.client.get(reverse('taskman:teams'))
-        self.client.login(username='tomisbest0', password='tom123456789')
+        User.objects.create_user(username='tomisbest10', password='tom123456789')
+        login = self.client.login(username='tomisbest10', password='tom123456789') 
+        self.assertTrue(login)
+        #response = self.client.get(reverse('taskman:teams'))
+        #self.client.login(username='tomisbest0', password='tom123456789')
+        response = self.client.get('/teams/', follow=True)
+        #response = self.client.get(reverse('taskman:teams'), {'user_id': 'tomisbest0'},follow=True)
+        #self.client.force_login(self.user)
         #print('hello')
         self.assertEqual(response.status_code, 200)
-        #self.assertContains(response, "No polls are available.")
+        self.assertContains(response, "You aren't a part of any team")
         #self.assertQuerysetEqual(response.context['teams'], [])
+class DashBoardIndexViewTests(TestCase):
+
+    def test_no_tasks(self):
+        User.objects.create_user(username='tomisbest10', password='tom123456789')
+        login = self.client.login(username='tomisbest10', password='tom123456789') 
+        self.assertTrue(login)
+        response = self.client.get('/dashboard/', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "There are no tasks assigned")      
+
+
 

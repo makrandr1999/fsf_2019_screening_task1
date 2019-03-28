@@ -36,8 +36,8 @@ def select_team(request):
     if request.method == "POST":
         form = SelectTeamForm(request,request.POST)
         if form.is_valid():
-            team = form.save(commit=False)
-            form.save()
+            #team = form.save(commit=False)
+            #form.save()
             team = form.cleaned_data.get('team')
             if team == None:
                 teamid= 0
@@ -96,7 +96,7 @@ def load_assignees(request):
 @login_required               
 def create_tasks(request,teamid):
     team_check=Team.objects.filter(Q(members__username=request.user) | Q(creator =request.user),id=teamid).distinct()
-    if team_check:
+    if team_check or teamid==0:
         if request.method == "POST":
             form = TaskForm(request,teamid,request.POST)
             if form.is_valid():

@@ -49,16 +49,30 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('text',)
-class SelectTeamForm(forms.ModelForm):
-
+class SelectTeamForm(forms.Form):
+    team = forms.ModelChoiceField(queryset=None, empty_label="Leave this field blank and click on proceed to set assignee as self")
+    
+    '''
     class Meta:
         model = Task
         fields = ('team',)
+    '''
     def __init__(self,request,*args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['team'].required = False
+        #self.fields['assignee'].required = True
         teams= Team.objects.filter(Q(members__username=request.user) | Q(creator =request.user)).distinct()
-        self.fields['team'].queryset = teams
+        if not teams:
+            self.fields['team'].queryset = Team.objects.none()
+        else:
+             self.fields['team'].queryset = teams
+
+       
+    
+    class Meta:
+        fields = ('team',)
+    
+    
         
            
 
