@@ -16,7 +16,8 @@ class TaskForm(forms.ModelForm):
     #team = forms.ModelChoiceField(queryset=Team.objects.filter(members__username=User))
     class Meta:
         model = Task
-        fields = ('assignee','title','text','status')
+        fields = ('assignee','title','text','status',)
+        #exclude = ['team','published_date','creator']
         '''
         city = forms.ModelChoiceField(
         queryset=City.objects.all(),
@@ -35,6 +36,7 @@ class TaskForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['title'].required = True
         self.fields['assignee'].required = True
+        #self.fields['team'].queryset=Team.objects.filter(id=teamid)
         if teamid is not 0 :
             i=Team.objects.filter(id=teamid)
             self.fields['assignee'].queryset =i[0].members.all()

@@ -36,22 +36,15 @@ def select_team(request):
     if request.method == "POST":
         form = SelectTeamForm(request,request.POST)
         if form.is_valid():
-            #team = form.save(commit=False)
-            #form.save()
             team = form.cleaned_data.get('team')
             if team == None:
                 teamid= 0
             else:
                 teamid=team.id    
-            
-            
-            #messages.success(request,f" Team Selected: {teamname}")
-            #return HttpResponse("Team Selected. %s" %teamid )
             return redirect("taskman:create_tasks",teamid=teamid)
 
         else:
-            #for msg in form.error_messages:
-            #    messages.error(request, f"{msg}:{form.error_messages[msg]}")
+
 
             return render(request = request,
                           template_name = "taskman/select-team.html",
@@ -102,9 +95,12 @@ def create_tasks(request,teamid):
             if form.is_valid():
                 submission = form.save(commit=False)
                 submission.creator = request.user
+                if teamid != 0:
+                    submission.team=Team.objects.filter(id=teamid)[0]
                 form.save()
                 taskname = form.cleaned_data.get('title')
                 messages.success(request,f"New Task Created: {taskname}")
+                messages.success(request,f"Team ID: {teamid}")
 
                 return redirect("taskman:dashboard")
 
@@ -126,10 +122,10 @@ def create_tasks(request,teamid):
     
 @login_required               
 def dashboard(request):
-    query_results = Task.objects.filter(Q(assignee=request.user) | Q(creator =request.user)).distinct()
+    tasks = Task.objects.filter(Q(assignee=request.user) | Q(creator =request.user)).distinct()
 
     return render(request = request,
-                  template_name='taskman/dashboard.html',context={"tasks":query_results})
+                  template_name='taskman/dashboard.html',context={"tasks":tasks})
 @login_required
 def task_edit(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
@@ -140,7 +136,7 @@ def task_edit(request, task_id):
                task.save()
                return redirect('taskman:detail',task_id=task_id)
         else:
-            form = TaskForm(instance=task,request=request,teamid=task.team.id)
+            form = TaskForm(instance=task,teamid=task.team.id,request=request)
             return render(request, 'taskman/create-task.html', {'form': form})      
     else:
         return render(request = request,

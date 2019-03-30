@@ -127,7 +127,26 @@ class TeamIndexViewTests(TestCase):
         #print('hello')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "You aren't a part of any team")
-        #self.assertQuerysetEqual(response.context['teams'], [])    
+        #self.assertQuerysetEqual(response.context['teams'], [])  
+    def test_team_details(self):
+        User.objects.create_user(username='tomisbest10', password='tom123456789')
+        login = self.client.login(username='tomisbest10', password='tom123456789') 
+        self.assertTrue(login)
+        team = Team(pk=5,name='Team abc',creator=usera.username)
+        team.save()
+        team.members.set(User.objects.all())
+        team.save()
+        response = self.client.get('/teams/', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(response.context['teams'],['<Team: Team abc>'])
+        self.assertEqual(response.context['teams'][0].name,'Team abc')
+        self.assertEqual(response.context['teams'][0].members.all()[0].username,'tomisbest10')
+        self.assertEqual(response.context['teams'][0].creator,'tomisbest0')
+
+
+
+
+
 class DashBoardIndexViewTests(TestCase):
 
     def test_no_tasks(self):
@@ -136,7 +155,29 @@ class DashBoardIndexViewTests(TestCase):
         self.assertTrue(login)
         response = self.client.get('/dashboard/', follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "There are no tasks assigned")      
+        self.assertContains(response, "There are no tasks assigned") 
+
+    def test_task_details(self):
+        User.objects.create_user(username='tomisbest99', password='tom123456789')
+        login = self.client.login(username='tomisbest99', password='tom123456789') 
+        self.assertTrue(login)
+        team = Team(pk=99,name='Team task details',creator=usera.username)
+        team.save()
+        team.members.set(User.objects.all())
+        team.save()
+        task=Task(pk=1,creator=usera,title='test task details title',text='test title description',team=team,status='Planned')
+        task.save()
+        task.assignee.set(User.objects.all())
+        task.save()
+        response = self.client.get('/dashboard/', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(response.context['tasks'],[])
+
+        #self.assertEqual(response.context['teams'][0].name,'Team abc')
+        #self.assertEqual(response.context['teams'][0].members.all()[0].username,'tomisbest10')
+        #self.assertEqual(response.context['teams'][0].creator,'tomisbest0')
+        
+
 
 
 
