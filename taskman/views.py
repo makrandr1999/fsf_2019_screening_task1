@@ -133,9 +133,19 @@ def task_edit(request, task_id):
         if request.method == "POST":
             form = TaskForm(task,task.team.id,request.POST)
             if form.is_valid():
+               #submission = form.save(commit=False)
+               
                task.save()
+               messages.info(request,f"new title {task.title}") 
+               
                return redirect('taskman:detail',task_id=task_id)
+            else:
+               for msg in form.error_messages:
+                    messages.error(request, f"{msg}:{form.error_messages[msg]}")  
+               form = TaskForm(instance=task,teamid=task.team.id,request=request)
+               return render(request, 'taskman/create-task.html', {'form': form})        
         else:
+            
             form = TaskForm(instance=task,teamid=task.team.id,request=request)
             return render(request, 'taskman/create-task.html', {'form': form})      
     else:
