@@ -13,35 +13,25 @@ class TeamForm(forms.ModelForm):
         fields = ('name','members')
 
 class TaskForm(forms.ModelForm):
-    #team = forms.ModelChoiceField(queryset=Team.objects.filter(members__username=User))
     class Meta:
         model = Task
         fields = ('assignee','title','text','status',)
-        #exclude = ['team','published_date','creator']
-        '''
-        city = forms.ModelChoiceField(
-        queryset=City.objects.all(),
-        label=u"City",
-        widget=ModelSelect2Widget(
-            model=City,
-            search_fields=['name__icontains'],
-            dependent_fields={'country': 'country'},
-            max_results=500,
-        )
-    )
-       '''
+
     
        
-    def __init__(self,request,teamid,*args, **kwargs):
+    def __init__(self,*args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['title'].required = True
         self.fields['assignee'].required = True
-        #self.fields['team'].queryset=Team.objects.filter(id=teamid)
+        '''
         if teamid is not 0 :
             i=Team.objects.filter(id=teamid)
             self.fields['assignee'].queryset =i[0].members.all()
         else:
             self.fields['assignee'].queryset=User.objects.filter(username=request.user)
+        '''    
+       
+    
 
         
         #self.fields['assignee'].queryset = Team.objects.none()

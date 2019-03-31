@@ -9,6 +9,7 @@ from django.http import Http404
 from django.http import HttpResponse
 from django.db.models import Q
 from .forms import TeamForm,TaskForm,CommentForm,SelectTeamForm
+from django.contrib.auth.models import User
 
 # Create your views here.sdfkj486578  Team.objects.filter(members__username='zaccishere')
 def homepage(request):
@@ -91,7 +92,7 @@ def create_tasks(request,teamid):
     team_check=Team.objects.filter(Q(members__username=request.user) | Q(creator =request.user),id=teamid).distinct()
     if team_check or teamid==0:
         if request.method == "POST":
-            form = TaskForm(request,teamid,request.POST)
+            form = TaskForm(request.POST)
             if form.is_valid():
                 submission = form.save(commit=False)
                 submission.creator = request.user
@@ -111,8 +112,11 @@ def create_tasks(request,teamid):
                 return render(request = request,
                                 template_name = "taskman/create-task.html",
                                 context={"form":form})
-
-        form = TaskForm(request=request,teamid=teamid)
+        if teamid is not 0 :
+            i=Team.objects.filter(id=teamid)                        
+            form = TaskForm(initial={'assignee':a for a in i[0].members.all})
+        else:
+            form=  TaskForm(initial={'assignee':User.objects.filter(username=request.user)})  
         return render(request = request,
                         template_name = "taskman/create-task.html",
                         context={"form":form}) 
@@ -131,22 +135,17 @@ def task_edit(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     if task.creator==request.user:
         if request.method == "POST":
-            form = TaskForm(task,task.team.id,request.POST)
+            form = TaskForm(request.POST, instance=task)
             if form.is_valid():
                #submission = form.save(commit=False)
                
                task.save()
                messages.info(request,f"new title {task.title}") 
                
-               return redirect('taskman:detail',task_id=task_id)
-            else:
-               for msg in form.error_messages:
-                    messages.error(request, f"{msg}:{form.error_messages[msg]}")  
-               form = TaskForm(instance=task,teamid=task.team.id,request=request)
-               return render(request, 'taskman/create-task.html', {'form': form})        
+               return redirect('taskman:detail',task_id=task_id)      
         else:
             
-            form = TaskForm(instance=task,teamid=task.team.id,request=request)
+            form = TaskForm(instance=task)
             return render(request, 'taskman/create-task.html', {'form': form})      
     else:
         return render(request = request,
