@@ -44,17 +44,7 @@ class TaskModelTest(TestCase):
         task = Task.objects.get(pk=1)
         max_length = task._meta.get_field('title').max_length
         self.assertEquals(max_length, 200)
-    '''
-    def test_object_name_is_last_name_comma_first_name(self):
-        author = Author.objects.get(id=1)
-        expected_object_name = f'{author.last_name}, {author.first_name}'
-        self.assertEquals(expected_object_name, str(author))
 
-    def test_get_absolute_url(self):
-        author = Author.objects.get(id=1)
-        # This will also fail if the urlconf is not defined.
-        self.assertEquals(author.get_absolute_url(), '/catalog/author/1')
-    '''
     
 class TeamModelTest(TestCase):
     @classmethod
@@ -119,15 +109,10 @@ class TeamIndexViewTests(TestCase):
         User.objects.create_user(username='tomisbest10', password='tom123456789')
         login = self.client.login(username='tomisbest10', password='tom123456789') 
         self.assertTrue(login)
-        #response = self.client.get(reverse('taskman:teams'))
-        #self.client.login(username='tomisbest0', password='tom123456789')
         response = self.client.get('/teams/', follow=True)
-        #response = self.client.get(reverse('taskman:teams'), {'user_id': 'tomisbest0'},follow=True)
-        #self.client.force_login(self.user)
-        #print('hello')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "You aren't a part of any team")
-        #self.assertQuerysetEqual(response.context['teams'], [])  
+ 
     def test_team_details(self):
         User.objects.create_user(username='tomisbest10', password='tom123456789')
         login = self.client.login(username='tomisbest10', password='tom123456789') 
@@ -171,11 +156,12 @@ class DashBoardIndexViewTests(TestCase):
         task.save()
         response = self.client.get('/dashboard/', follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertQuerysetEqual(response.context['tasks'],[])
+        self.assertEqual(response.context['tasks'][0].title,'test task details title')
+        self.assertEqual(response.context['tasks'][0].assignee.all()[0].username,'tomisbest99')
+        self.assertEqual(response.context['tasks'][0].text,'test title description')
+        self.assertEqual(response.context['tasks'][0].status,'Planned')
 
-        #self.assertEqual(response.context['teams'][0].name,'Team abc')
-        #self.assertEqual(response.context['teams'][0].members.all()[0].username,'tomisbest10')
-        #self.assertEqual(response.context['teams'][0].creator,'tomisbest0')
+
         
 
 
