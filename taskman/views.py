@@ -11,7 +11,7 @@ from django.db.models import Q
 from .forms import TeamForm,TaskForm,CommentForm,SelectTeamForm
 from django.contrib.auth.models import User
 
-# Create your views here.sdfkj486578  Team.objects.filter(members__username='zaccishere')
+# Create your views here.  
 def homepage(request):
     return render(request = request,
                   template_name='taskman/home.html')
@@ -80,13 +80,7 @@ def create_teams(request):
     return render(request = request,
                   template_name = "taskman/create-team.html",
                   context={"form":form})
-'''
-@login_required
-def load_assignees(request):
-    id = request.GET.get('team')
-    assignees = Team.objects.filter(id=id).values_list('members__username')
-    return render(request, 'taskman/assignee_dropdown_list_options.html', {'cities': assignees})                     
-'''
+
 @login_required               
 def create_tasks(request,teamid):
     team_check=Team.objects.filter(Q(members__username=request.user) | Q(creator =request.user),id=teamid).distinct()
@@ -137,8 +131,6 @@ def task_edit(request, task_id):
         if request.method == "POST":
             form = TaskForm(request.POST, instance=task)
             if form.is_valid():
-               #submission = form.save(commit=False)
-               
                task.save()
                messages.info(request,f"new title {task.title}") 
                
@@ -175,7 +167,6 @@ def add_comment(request, task_id):
 @login_required
 def detail(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
-    #task = Task.objects.filter(id=task_id)
     if request.user in task.assignee.all()  or task.creator == request.user:
         assignees=task.assignee.all()
         return render(request, 'taskman/detail.html', {'task': task,'assignees':assignees})
@@ -231,4 +222,4 @@ def login_request(request):
     form = AuthenticationForm()
     return render(request,"taskman/login.html",{"form":form})    
 
-# Create your views here.
+
