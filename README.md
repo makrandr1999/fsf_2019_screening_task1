@@ -1,4 +1,5 @@
 # fsf_2019_screening_task1 : Task Manager 
+![Homepage](https://drive.google.com/file/d/1pD6pTn0dpvJR1HXU--yV5pX2ob2_bm0m/view?usp=sharing)
 
 Taskmanager is a multi-user Django based webapp that lets its users effectively manage and monitor their tasks thereby increasing work productivity.
 The webapp provides a simple easy to use user-friendly interface to collaborate with team members and track their task statuses.
@@ -45,4 +46,4 @@ python manage.py runserver
 ```
 
 ## Detailed Documentation
-Browse detailed documentation, installation and screenshots on how to use the taskmanager app and collaborate with teams.
+Browse [detailed documentation, installation and screenshots](https://drive.google.com/file/d/1AQOAUrvZkf8mjhhMixESvIhTWHVpZEBU/view?usp=sharing) on how to use the taskmanager app and collaborate with teams.
